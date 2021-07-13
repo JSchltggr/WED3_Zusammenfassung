@@ -1,0 +1,105 @@
+\documentclass[8pt,landscape,a4paper]{scrartcl}
+\usepackage[german]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{multicol}
+\usepackage[landscape]{geometry}
+\usepackage{sectsty}
+\usepackage{mwe}
+\usepackage{comment}
+\usepackage{lipsum}
+\usepackage{titlesec}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{amsmath}
+\usepackage{enumitem}
+\usepackage{color}
+\usepackage[T1]{fontenc}
+
+%format
+\geometry{top=0.1cm,left=0.1cm,right=0.1cm,bottom=0.2cm}
+
+%Define Color
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+\definecolor{lightlightgrey}{rgb}{0.89,0.89,0.89}
+\definecolor{b}{RGB}{0, 120, 255}
+\definecolor{lightgray}{rgb}{0.95, 0.95, 0.95}
+\definecolor{darkgray}{rgb}{0.4, 0.4, 0.4}
+\definecolor{purple}{rgb}{0.65, 0.12, 0.82}
+\definecolor{editorGray}{rgb}{0.95, 0.95, 0.95}
+\definecolor{editorOcher}{rgb}{1, 0.5, 0} % #FF7F00 -> rgb(239, 169, 0)
+\definecolor{editorGreen}{rgb}{0, 0.5, 0} % #007C00 -> rgb(0, 124, 0)
+\definecolor{orange}{rgb}{1,0.45,0.13}
+\definecolor{olive}{rgb}{0.17,0.59,0.20}
+\definecolor{brown}{rgb}{0.69,0.31,0.31}
+\definecolor{purple}{rgb}{0.38,0.18,0.81}
+\definecolor{lightblue}{rgb}{0.1,0.57,0.7}
+\definecolor{lightred}{rgb}{1,0.4,0.5}
+
+\usepackage{graphicx}
+\graphicspath{{./media/}}
+
+\setkeys{Gin}{width=\linewidth}
+
+% Code Snippets
+\usepackage{courier} %% Sets font for listing as Courier.
+\usepackage{listings}
+
+% Code Listing
+\lstset{
+language={java},
+basicstyle={\footnotesize\ttfamily},
+aboveskip=0mm,
+belowskip=0mm,
+frame=none,
+backgroundcolor=\color{lightgray},
+columns=flexible,
+showstringspaces=false,
+commentstyle=\color{editorGreen},
+keywordstyle=\bfseries \color{blue},
+stringstyle=\color{mauve},
+breaklines = true,
+tabsize=2,
+% breakatwhitespace=true,
+literate =%
+{Ö}{{\"O}}1
+{Ä}{{\"A}}1
+{Ü}{{\"U}}1
+{ü}{{\"u}}1
+{ä}{{\"a}}1
+{ö}{{\"o}}1
+}
+
+% Define Section Format
+\titleformat{name=\section}[block]
+{\sffamily\tiny}
+{}
+{0pt}
+{\colorsection}
+\titlespacing*{\section}{0pt}{0.3ex}{0.3ex}
+
+\newcommand{\colorsection}[1]{%
+\colorbox{ForestGreen!40}{\parbox{0.235\textwidth}{\color{black}\thesection\ #1}}}
+
+
+% Define Subsection Format
+\titleformat{name=\subsection}[block]
+{\sffamily\tiny}
+{}
+{0pt}
+{\colorsubsection}
+\titlespacing*{\subsection}{0pt}{0.3ex}{0.3ex}
+
+\newcommand{\colorsubsection}[1]{%
+\colorbox{yellow!50}{\parbox{0.235\textwidth}{\color{black}\thesubsection\ #1}}}
+
+% Define Subsubsection Format
+\titleformat{name=\subsubsection}[block]
+{\sffamily\tiny}
+{}
+{0pt}
+{\colorsubsubsection}
+\titlespacing*{\subsubsection}{0pt}{0.3ex}{0.3ex}
+
+\newcommand{\colorsubsubsection}[1]{%
+\colorbox{BrickRed!40}{\parbox{0.235\textwidth}{\color{black}\thesubsubsection\ #1}}}
