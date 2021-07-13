@@ -45,26 +45,103 @@
 \usepackage{courier} %% Sets font for listing as Courier.
 \usepackage{listings}
 
-% Code Listing
-\lstset{
-language={java},
+% CSS
+\lstdefinelanguage{CSS}{
+keywords={color,background-image:,margin,padding,font,weight,display,position,top,left,right,bottom,list,style,border,size,white,space,min,width, transition:, transform:, transition-property, transition-duration, transition-timing-function},
+sensitive=true,
+morecomment=[l]{//},
+morecomment=[s]{/*}{*/},
+morestring=[b]',
+morestring=[b]",
+alsoletter={:},
+alsodigit={-}
+}
+
+% JavaScript
+\lstdefinelanguage{JavaScript}{
+morekeywords={typeof, new, true, false, catch, function, return, null, catch, switch, var, if, in, while, do, else, case, break, const, import},
+morecomment=[s]{/*}{*/},
+morecomment=[l]//,
+morestring=[b]",
+morestring=[b]'
+}
+
+\lstdefinelanguage{HTML5}{
+language=html,
+sensitive=true,
+alsoletter={<>=-},
+morecomment=[s]{<!-}{-->},
+tag=[s],
+otherkeywords={
+% General
+>,
+% Standard tags
+<!DOCTYPE,
+</html, <html, <head, <title, </title, <style, </style, <link, </head, <meta, />,
+% body
+</body, <body,
+% footer
+<footer, /footer,
+% Divs
+</div, <div, </div>,
+% Paragraphs
+</p, <p, </p>,
+% scripts
+</script, <script,
+% More tags...
+<canvas, </canvas, <svg, <rect, <animateTransform, </rect, </svg, <video, <source, <iframe, </iframe, </video, <image, </image, <header, </header, <article, </article, <a, </a, <img, </img, <span, </span, <ul, </ul, <li, </li, <input, <br, <form, <h2, <h1, <h3, <button, <nav, <link, <main, <aside, <style, </style, <label, </label, </form, </button, <figure, </figure, <figcaption, </figcaption, <audio, </audio, </h3
+},
+ndkeywords={
+% General
+=,
+% HTML attributes
+charset=, src=, id=, width=, height=, style=, type=, rel=, href=,
+% SVG attributes
+fill=, attributeName=, begin=, dur=, from=, to=, poster=, controls=, x=, y=, repeatCount=, xlink:href=,
+% properties
+margin:, padding:, background-image:, border:, top:, left:, position:, width:, height:, margin-top:, margin-bottom:, font-size:, line-height:,
+% CSS3 properties
+transform:, -moz-transform:, -webkit-transform:,
+animation:, -webkit-animation:,
+transition:,  transition-duration:, transition-property:, transition-timing-function:,
+}
+}
+
+\lstdefinestyle{htmlcssjs} {%
+% General design
+backgroundcolor=\color{editorGray},
 basicstyle={\footnotesize\ttfamily},
 aboveskip=0mm,
 belowskip=0mm,
 frame=none,
-backgroundcolor=\color{lightgray},
-columns=flexible,
-showstringspaces=false,
-commentstyle=\color{editorGreen},
-keywordstyle=\bfseries \color{blue},
-stringstyle=\color{mauve},
-breaklines = true,
+% line-numbers
+%xleftmargin={0.6cm},
+%numbers=left,
+stepnumber=1,
+firstnumber=1,
+numberfirstline=true,
+% Code design
+identifierstyle=\color{black},
+keywordstyle=\color{blue}\bfseries,
+ndkeywordstyle=\color{editorGreen}\bfseries,
+stringstyle=\color{editorOcher}\ttfamily,
+commentstyle=\color{brown}\ttfamily,
+% Code
+language=HTML5,
+alsolanguage=JavaScript,
+alsodigit={.:;},
 tabsize=2,
-% breakatwhitespace=true,
-literate =%
+showtabs=false,
+showspaces=false,
+showstringspaces=false,
+extendedchars=true,
+breaklines=true,
+% German umlauts
+literate=%
 {Ö}{{\"O}}1
 {Ä}{{\"A}}1
 {Ü}{{\"U}}1
+{ß}{{\ss}}1
 {ü}{{\"u}}1
 {ä}{{\"a}}1
 {ö}{{\"o}}1
