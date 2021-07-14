@@ -2,4 +2,128 @@
 %! Date = 13/07/2021
 
 \section{Angular}
-\subsection{Test}
+Flexible SPA Framework for CRUD applications
+\begin{itemize}[topsep=0pt, leftmargin=3mm]
+    \setlength\itemsep{-0.3em}
+    \item Typescript 4.1 based
+    \item Reduces boilerplate Code
+    \item Dependency Injection Mechanism
+    \item JS-optimized 2-way binding
+    \item Clearly structured, information hiding
+    \item Increases testability / maintainability of client-side code
+\end{itemize}
+\textcolor{b}{\textbf{ngModules:}} Cohesive block of code dedicated to closely related set of capabilities. (\textit{module})
+\textcolor{b}{\textbf{Directives:}} Provides instructions to transform the DOM. (\textit{class})
+\textcolor{b}{\textbf{Components:}} Directive-with-a-template; it controls a section of the view. (\textit{class})
+\textcolor{b}{\textbf{Templates:}} Form of HTML defining how to render the component. (\textit{HTML/CSS})
+\textcolor{b}{\textbf{Metadata:}} Describes a class and defines how to process it. (\textit{decorator})
+\textcolor{b}{\textbf{Services:}} Provides logic of any value, function or feature that the app needs. (\textit{class})
+\subsection{Angular Modules (ngModule)}
+Base for Angular modularity system. Every app has at least one Module, the root Module (a.k.a app). Root Module ist launched to bootstrap the app. Modules export features (directives, services) required by other modules.\\
+\textcolor{b}{\textbf{TypeScript Module vs. ngModule:}}\\
+ngModule is a logical block of multipe TypeScript modules linked together. The ngModule declaration itself is placed into a TypeScript module. Modules can accommodate sub-modules. All public TS members are exported as an overall \textit{barrel}
+\includegraphics[width=\linewidth]{angular_module_declaration.png}
+\textbf{declarations:} View Classes that belong to this module (Components, Directives, Pipes). \textbf{exports:} Subset of declarations that should be visible and usable by other modules. \textbf{imports:} Specifies the modules which exports/providers should be imported. \textbf{providers:} Creators of services that this module contributes to the global collection of services (DI Container). They become accessible in all parts of the app. \textbf{bootstrap:} The main application view, called the root component. Only the root module should set this property.
+\subsection{Components}
+A Component manages the view and binds data from the model. It consists of:
+\begin{itemize}[topsep=0pt, leftmargin=3mm]
+    \setlength\itemsep{-0.3em}
+    \item Controller $\rightarrow$ provides logic of view, declared as TS-Class with an @component() function decorator
+    \item HTML file $\rightarrow$ declares visual interface (template expression)
+    \item (S)CSS file $\rightarrow$ styles behind HTML file
+\end{itemize}
+\textbf{Components} can be nested (results in a Component tree). Provide intofrmation hiding:
+\begin{itemize}[topsep=0pt, leftmargin=3mm]
+    \setlength\itemsep{-0.3em}
+    \item Each Component declares a part of the UI
+    \item A Component should be implemented as small coherent piece to support \textcolor{b}{Testability}, \textcolor{b}{Maintainability}, \textcolor{b}{Reusability}
+\end{itemize}
+\includegraphics[width=\linewidth]{angular_component.png}
+Components must be declared within the containing module so its \textbf{selector} is registered for all sub-components of that module. They can be exported, so other modules can import them.
+\subsubsection{Components Lifecycle}
+Most important events are create (ngOnInit) and destroy (ngOnDestroy). ngAfter\ldots events are mainly for control.
+\begin{lstlisting}[style=htmlcssjs]
+@Component({ ... })
+export class MyComponent implements OnInit, OnDestroy {
+  ngOnInit() { console.log("OnInit"); }
+  ngOnDestroy() { console.log("OnDestroy"); } }
+\end{lstlisting}
+\subsubsection{Content Projection}
+\includegraphics[width=\linewidth]{angular_component_lifecycle_content_projection.png}
+\subsection{Templates}
+Angular extends the HTML vocabulary of your templates with: Interpolation ( $\{\{$\ldots$\}\}$ ), Template Expression/Statements, Binding Syntax, Directives, Template Reference Variables, Template Expression Operators\\
+\textcolor{b}{\textbf{Binding:}}\\
+\includegraphics[width=\linewidth]{angular_binding.png}
+\begin{minipage}{0.5\linewidth}
+    \includegraphics[width=0.8\linewidth]{angular_binding_example_2.png}
+\end{minipage}
+\begin{minipage}{0.5\linewidth}
+    Binding to targets must be declared as Inputs or Outputs. Targets stands on the left side of the binding declaration
+\end{minipage}
+\includegraphics[width=\linewidth]{angular_binding_example.png}
+\subsection{Directives}
+Similar to a component, but without a template. TypeScript class with an \textit{@Directive()} function decorator.\\
+\textcolor{b}{\textbf{Attribute Directives:}}\\
+\includegraphics[width=0.9\linewidth]{angular_attribute_directives.png}
+\textcolor{b}{\textbf{Structural Directives:}}\\
+\includegraphics[width=0.9\linewidth]{angular_structural_directives.png}\\
+\textcolor{b}{\textbf{Template Reference Variables:}}
+\begin{lstlisting}[style=htmlcssjs]
+<input placeholder="phone number" #phone>
+// phone refers to the input element; pass its `value` to an event handler
+<button (click)="callPhone(phone.value)">Call</button>
+\end{lstlisting}
+\subsection{Services}
+Provides any value, function, or feature that your application needs. Typical services are: logging service, data service, message bus, tax calculator, application configuration
+\begin{lstlisting}[style=htmlcssjs]
+@Injectable({ providedIn: 'root' })
+export class CounterService { ... }
+\end{lstlisting}
+\includegraphics[width=\linewidth]{angular_services.png}
+\subsection{Forms}
+\includegraphics[width=\linewidth]{angular_forms_1.png}
+\includegraphics[width=\linewidth]{angular_forms_2.png}
+\subsection{Asynchronous Services}
+\includegraphics[width=\linewidth]{angular_asynchronous_services_1.png}
+\includegraphics[width=\linewidth]{angular_asynchronous_services_2.png}
+\subsection{Data Access}
+\textcolor{b}{\textbf{HTTP Client}} implements asynchronisms by using the RxJS library (library that implements the Observable pattern).\\
+\textbf{Hot Observables:} Sequence of events (mouse move), shared among all subscribers \textbf{Cold Observables:} start running on subscription (async web requests), Not shared among subscribers, automatically closed after task is finished
+\includegraphics[width=\linewidth]{angular_http_client.png}
+\subsection{Routing}
+To navigate among the views. Multiple directives: \textcolor{b}{RouterOutlet, RouterLink, RouterLinkActive}\\
+\textbf{.forRoot():} use exactly once to declare routes on root level \textbf{.forChild():} use when declaring sub-routings\\
+\begin{minipage}{0.5\linewidth}
+    \includegraphics[width=\linewidth]{angular_forRoot.png}
+\end{minipage}
+\begin{minipage}{0.5\linewidth}
+    \includegraphics[width=\linewidth]{angular_forChild.png}
+\end{minipage}
+\begin{lstlisting}[style=htmlcssjs]
+const appRoutes: Routes = [
+  // matches /hero/42, 42 saved in param
+  {path: 'hero/:id', component: 'Hero'},
+  // redirect
+  {path: '', redirectTo: '/heroes', pathMatch: 'full'},
+  {path: '**', component: PageNotFound} ]; // Wildcard
+//Lazy Loading
+{path: 'config', loadChildren: () => import('./cfg/cfg
+.module').then(m => m.CfgModule), canLoad: [AuthGuard] }
+\end{lstlisting}
+\subsection{Redux Architecture}
+\textbf{ngrx:} implements the Redux pattern using RxJS.
+\textbf{Benefits:}
+\begin{itemize}[topsep=0pt, leftmargin=3mm]
+    \setlength\itemsep{-0.3em}
+    \item Enhanced debugging, testability and maintainability
+    \item Undo/redo can be implemented easily
+    \item Reduced code in Angular Components
+\end{itemize}
+\textbf{Liabilities:}
+\begin{itemize}[topsep=0pt, leftmargin=3mm]
+    \setlength\itemsep{-0.3em}
+    \item Additional 3rd party library required
+    \item More complex architecture
+    \item Lower cohesion, global state may contain UI / business data
+    \item Data logic may be fragmented into multiple effects/reducers
+\end{itemize}
