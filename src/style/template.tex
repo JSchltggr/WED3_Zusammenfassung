@@ -147,6 +147,69 @@ literate=%
 {ö}{{\"o}}1
 }
 
+\lstdefinestyle{csh} {%
+% General design
+backgroundcolor=\color{editorGray},
+basicstyle={\footnotesize\ttfamily},
+aboveskip=0mm,
+belowskip=0mm,
+frame=none,
+% line-numbers
+%xleftmargin={0.6cm},
+%numbers=left,
+stepnumber=1,
+firstnumber=1,
+numberfirstline=true,
+% Code design
+identifierstyle=\color{black},
+keywordstyle=\color{blue}\bfseries,
+ndkeywordstyle=\color{editorGreen}\bfseries,
+stringstyle=\color{editorOcher}\ttfamily,
+commentstyle=\color{brown}\ttfamily,
+% Code
+language=csh,
+alsodigit={.:;},
+tabsize=2,
+showtabs=false,
+showspaces=false,
+showstringspaces=false,
+extendedchars=true,
+breaklines=true,
+% German umlauts
+literate=%
+{Ö}{{\"O}}1
+{Ä}{{\"A}}1
+{Ü}{{\"U}}1
+{ß}{{\ss}}1
+{ü}{{\"u}}1
+{ä}{{\"a}}1
+{ö}{{\"o}}1,
+morekeywords={ abstract, event, new, struct,
+as, explicit, null, switch,
+base, extern, object, this,
+bool, false, operator, throw,
+break, finally, out, true,
+byte, fixed, override, try,
+case, float, params, typeof,
+catch, for, private, uint,
+char, foreach, protected, ulong,
+checked, goto, public, unchecked,
+class, if, readonly, unsafe,
+const, implicit, ref, ushort,
+continue, in, return, using,
+decimal, int, sbyte, virtual,
+default, interface, sealed, volatile,
+delegate, internal, short, void,
+do, is, sizeof, while,
+double, lock, stackalloc,
+else, long, static,
+enum, namespace, string, var, await, async},
+morecomment=[l]{//},
+morecomment=[s]{/*}{*/},
+morestring=[b]',
+morestring=[b]",
+}
+
 % Define Section Format
 \titleformat{name=\section}[block]
 {\sffamily\tiny}

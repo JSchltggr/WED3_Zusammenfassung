@@ -2,4 +2,142 @@
 %! Date = 13/07/2021
 
 \section{ASP.NET}
-\subsection{Test}
+\subsection{C\# Grundlagen}
+\begin{lstlisting}[style=csh]
+// Anonyme Typen
+var v = new { Amount = 108, Message = "Hello" };
+// Keine Typechecks und kein IntelliSense
+dynamic person = new ExpandoObject();
+// Extension Method
+public static class MyExtensions {
+  public static int WordCount(this string str) { return
+    str.Split(new char[] { ' ', '.', '?' }).Length; } }
+// Middleware registrieren
+app.Use(async (context, next) => {
+  System.Diagnostics.Debug.WriteLine("Handling req.");
+  await next.Invoke();
+  System.Diagnostics.Debug.WriteLine("finish req"); });
+// Verzweigung für Pfad
+app.Map("/logging", builder => {
+  builder.Run(async (context) => {
+    await context.Response.WriteAsync("Hello"); }); });
+// Request terminieren
+app.Run(async (context) => {
+  await context.Response.WriteAsync("Hello World!"); });
+// Custom Middleware als Klasse (Wichtigste !!)
+public class RequestLoggerMiddleware {
+  public RequestLoggerMiddleware(RequestDelegate next, ILoggerFactory loggerFactory) {
+    _next = next; _logger = loggerFactory.CreateLogger<RequestLoggerMiddleware>(); }
+  public async Task Invoke(HttpContext context) {
+    _logger.LogInformation("Handling request: " + context.Request.Path);
+    await _next.Invoke(context); _logger.LogInformation("Finished handling request."); } }
+\end{lstlisting}
+\subsection{Dependency Injection}
+ASP.NET Core kommt mit einem primitiven Dependency Injection Container. \textbf{Idee:} Klasse erwähnt welche Interfaces benötigt werden. Ein Resolver sucht im Container nach einer geeigneten Klasse und übergibt diese. \textbf{Ziel:} Reduzieren von hoher Kopplung zwischen verschiedenen Klassen.
+\begin{lstlisting}[style=csh]
+public class Startup {
+  // called by runtime, Used to add services
+  public void ConServices(IserviceCollection services) {
+    services.AddTransient<IUserService, UserService>();}
+  // Called by runtime, Configure HTTP req pipeline
+  public void Configure(IApplicationBuilder app,
+IHostingEnvironment env, ILoggerFactory loggerFactory) {
+    app.UseMiddleware<UserMiddleware>(); } }
+// Benutzen
+public class UserMiddleware {
+  private readonly RequestDelegate _next;
+  public UserMiddleware(RequestDelegate next,
+IUserService userService) { // Captive Dependency*
+    _next = next; }
+  public async Task Invoke(HttpContext context,
+IUserService userService) { // No Captive Dependency
+    await context.Response.WriteAsync(string.Join(", ", userService.Users)); } }
+\end{lstlisting}
+\textcolor{b}{\textbf{Transient:}} Created each time they are requested. Works best for lightweight, stateless services. \textcolor{b}{\textbf{Scoped:}} Created once per request. \textcolor{b}{\textbf{Singleton:}} Created the first time they are requested. Every subsequent request will use the same instance.\\
+\textcolor{b}{\textbf{Captive Dependency Problematik:}} Komponenten dürfen sich nur Komponenten mit gleicher oder längerer Lebensdauer Injection lassen.
+\subsection{Projekt-Struktur}
+\textcolor{b}{\textbf{wwwroot:}} Statische Inhalte der Webseite z.B. CSS / JS / HTML
+\textcolor{b}{\textbf{appsettings.json:}} Einstellungen der Webseite z.B. Connection-String zur DB
+\textcolor{b}{\textbf{Programm.cs:}} Einstiegspunkt von der Web Applikation
+\textcolor{b}{\textbf{Startup.cs:}} Konfiguriert die Web App
+\subsection{Pages}
+Alternative und vereinfachte Variante vom MVC. Router muss nicht konfiguriert werden. Best-Practices für Serverseitiges-Rendering. \textbf{Kombination mit MVC:} Statische Seiten mit Pages, REST-API mit MVC.\\
+\textcolor{b}{\textbf{Routing:}} Bei Aufruf einer URL wird im Folder Pages gesucht $\rightarrow$ Ist case insensitive: \textcolor{b}{/add} rendert \textcolor{b}{/pages/add.cshtml}
+\begin{lstlisting}[style=csh]
+// View mit Razor File: *.cshtml
+@page "/test/{id:int?}"
+@model Examples.Pages.Page.RoutingModel
+@{ ViewData["Title"] = "Routing"; }
+<h1>Routing</h1>
+<form asp-page="Bmi" data-ajax="true" data-ajax-method=
+"POST"><input asp-for="@Model.Bmi.Height" name="height">
+<button type="submit">submit</button></form>
+// View Model File: *.cshtml.cs
+public class RoutingModel : PageModel {
+  // GET (Query)
+  [BindProperty(SupportsGet = true)]
+  public int Id { get; set; }
+  // POST (Form)
+  [BindProperty]
+  public int Id2 { get; set; }
+  // Hilfs-Methoden
+  public void OnGet(){ ... }
+  public void OnPost(){ ... } }
+\end{lstlisting}
+\subsection{Razor}
+\textcolor{b}{\textbf{Shared/\_Layout.cshtml:}} Generelles Layout der App. Definierst Sections (Placeholders), welche von Page gefüllt werden.
+\begin{lstlisting}[style=csh]
+@RenderBody() // Platz für Content Page
+@RenderSection("Nav", false); // Platz für Section Page
+@section Nav{ /* ... */ }
+\end{lstlisting}
+\textcolor{b}{\textbf{\_ViewStart.cshtml:}} Hierarchisch, Code welcher vor Razor-Files ausgeführt wird. Definiert z.B. Layout für alle Pages
+\begin{lstlisting}[style=csh]
+@{ Layout = "_Layout"; }
+\end{lstlisting}
+\textcolor{b}{\textbf{\_ViewImports.cshtml:}} Hierarchisch, Namespaces / Tag-Helpers können in diesem File registriert werden.\\
+\textcolor{b}{\textbf{Tag Helpers:}} Ermöglichen C\# Code an HTML Tags zu binden. Bsp: Email-Tag durch Link Tag ersetzen.
+\begin{lstlisting}[style=csh]
+<email mail-for="test@example.com"></email>
+<a href="mailto:test@example.com">test@example.com</a>
+public class EmailTagHelper : TagHelper {
+  public string MailFor { get; set; }
+  public override void Process(TagHelperContext context, TagHelperOutput output) {
+    output.TagName = "a"; // Replaces email with a tag
+    output.Attributes.SetAttribute("href", "mailto:" + MailFor);
+    output.Content.SetContent(MailFor); } }
+\end{lstlisting}
+\textcolor{b}{\textbf{Partials:}} Markup Files, verwendet innerhalb von anderen Markup Files. Bessere Aufteilbarkeit und Wiederverwendbarkeit.
+\begin{lstlisting}[style=csh]
+<partial name="_Card" for="Card1" />
+<partial name="_Card" model='new DataBinding.X' />
+\end{lstlisting}
+\textcolor{b}{\textbf{View Components:}} Mächtigere Variante von Partials. Beinhalten Logik, können Daten laden/aufbearbeiten. Rendert ein Teil der Webseite (Pages komplett).
+\begin{lstlisting}[style=csh]
+public class ToDoList: ViewComponent {
+  public string[] Todos { get; set; }
+  public ToDoList() { Todos = new string "abc" }
+  public IViewComponentResult Invoke() {
+    // /Pages/Shared/Components/TodoList/Default
+    return View(Todos); } }
+// Razor File
+@Page
+@{ ViewData["Title"] = "ViewComponent"; }
+<vc:to-do-list></vc:to-do-list>
+@await Component.InvokeAsync("ToDoList")
+\end{lstlisting}
+\textcolor{b}{\textbf{ViewData/TempData:}} Mit Attribut Gekennzeichnete Daten werden allen Razor-Files im Render-Baum übergeben.\\
+\textbf{ViewData/ViewBag:} Daten an das \_Layout übergeben. \textbf{TempData:} Überlebt ein redirect, Cookie-Middleware nötig.
+\subsection{AJAX}
+\textcolor{b}{\textbf{Handlers:}} Pages können weitere Actions als handler anbieten. Schema: \textcolor{b}{On[Method][Name]}\\
+Aufruf: \textcolor{b}{[Page]?handler=[HandlerName]}
+\begin{lstlisting}[style=csh]
+// Aufruf: POST /Ajax?handler=echo
+public IActionResult OnPostEcho(string echoText){
+  return this.Content(echoText); }
+\end{lstlisting}
+\subsection{Entity Framework}
+\textcolor{b}{\textbf{Code First benötigt:}} Type Discovery (Welche Klassen in die DB), Connection String, DbContext (Entry Point) \textcolor{b}{\textbf{Migration:}} EF Core erlaubt keine automatische Migrationen von Model Änderungen mehr. Nur über Konsole: \textit{dotnet ef database update}\\
+\textcolor{b}{\textbf{Entity Konventionen:}} \textbf{public [long/string] Id:} Wird automatisch zum PK. \textbf{public virtual ApplicationUser Customer:} Als Navigation Property erkannt. \textbf{public [long/string] CustomerId:} Als FK für Customer Property erkannt\\
+\textcolor{b}{\textbf{Wichtige Attribute:}} \textbf{[Required]:} NotNull in DB. \textbf{[NotMapped]:} Nicht in DB geschrieben. \textbf{[Key]:} Definiert den PK. \textbf{[MaxLength(10)]:} Allokationsgrösse in DB
+\subsection{Validation}
