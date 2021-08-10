@@ -141,3 +141,100 @@ public IActionResult OnPostEcho(string echoText){
 \textcolor{b}{\textbf{Entity Konventionen:}} \textbf{public [long/string] Id:} Wird automatisch zum PK. \textbf{public virtual ApplicationUser Customer:} Als Navigation Property erkannt. \textbf{public [long/string] CustomerId:} Als FK für Customer Property erkannt\\
 \textcolor{b}{\textbf{Wichtige Attribute:}} \textbf{[Required]:} NotNull in DB. \textbf{[NotMapped]:} Nicht in DB geschrieben. \textbf{[Key]:} Definiert den PK. \textbf{[MaxLength(10)]:} Allokationsgrösse in DB
 \subsection{Validation}
+\textbf{Client-Seitig:} Feedback für User. \textbf{Server-Seitig:} Datenkorrektheit, DB-Infos (z.B. Email schon vergeben)\\
+\textcolor{b}{\textbf{Schritt 1: Annotieren der Klassen}}\\
+\textbf{Mögliche Attribute:} [StringLength(60, MinimumLength = 3)], [RegularExpression(@"\ldots")], [Required], [DataType(DataType.Date)]. $\rightarrow$ Attribute sind kombinierbar.\\
+\textcolor{b}{\textbf{Schritt 2: Razor anpassen}} \textbf{Validation ins DOM einfügen:}
+\begin{lstlisting}[style=csh]
+<div asp-validation-summary="ModelOnly"></div>
+<span asp-validation-for="Item.Name"></span>
+\end{lstlisting}
+\textbf{JQuery Validation einbinden:}
+\begin{lstlisting}[style=csh]
+@section Scripts {
+  <script src=".../jquery.validate.js"></script>
+  <script src=".../...unobtrusive.js"></script> }
+\end{lstlisting}
+\textcolor{b}{\textbf{Schritt 3: Serverseitige Validierung}}
+\begin{lstlisting}[style=csh]
+[HttpPost]
+public ActionResult Index(Order order) {
+  if(ModelState.IsValid) {
+    order.CustomerId = User.Identity.GetUserId();
+    _db.Orders.Add(order);
+    _db.SaveChanges();
+    return View("OrderOk", order);
+  } return BadRequest(); }
+\end{lstlisting}
+\subsection{Authentifizierung}
+\textcolor{b}{\textbf{ASP.NET Identity Features:}} PW Stärke, User Validator, Lockout Mechanismus, 2Faktor Auth, Reset PW, OAuth\\
+\textcolor{b}{\textbf{ASP.NET Identity Klassen:}} IAuthorizationService (Validation von Policies), UserManager<ApplicationUser>, RoleManager<IdentityRole>, SignInManager
+\begin{lstlisting}[style=csh]
+// Aktivierung & Konfiguration im Startup.cs
+services.AddDefaultIdentity<IdentityUser>() // DI
+  .AddEntityFrameworkStores<ApplicationDbContext>()
+  .AddDefaultTokenProviders();
+app.UseIdentity(); // Middleware
+// Einstellungen
+services.AddDefaultIdentity<IdentityUser>( options => { options.Password.RequireDigit = false; options.Password.RequiredLength = 8; })
+  .AddRoles<IdentityRole>()
+  .AddEntityFrameworkStores<ApplicationDbContext>()
+// Anwenden mit [Authorize] und [AllowAnonymous]
+this.User // Eingeloggter User Typ: ClaimsPrincipal
+// CRUD Operationen über ApplicationUsers von DI
+var user = await _userManager.GetUserAsync(User);
+var id = _userManager.GetUserId(User);
+// -> Claim: Statement über einen User, ausgestellt von einem Identity Provider.
+// Automatisch überprüfen
+[Authorize]
+public ActionResult Create() { return View(order); }
+// Manuell überprüfen
+public ActionResult Create() {
+  if(User.Identity.IsAuthenticated) {return View(order)}
+  else { return new StatusCodeResult(401); } }
+\end{lstlisting}
+\subsection{Authorisierung}
+\begin{lstlisting}[style=csh]
+// Lösung 1: Attribute
+[Authorize(Roles = "Admin, PowerUser")]
+[Authorize(Policy = "OlderThan18, Founders")]
+// Lösung 2: Services:
+var user = await _userManager.GetUserAsync(User);
+await _userManager.IsInRoleAsync(user,"Admin");
+// Lösung 3: Claims
+User.HasClaim(ClaimTypes.Role, "Admin");
+\end{lstlisting}
+\textcolor{b}{\textbf{Policy:}} Ermöglichen es, komplexere Regeln zu definieren.
+\begin{lstlisting}[style=csh]
+options.AddPolicy("Founders", policy => {
+  policy.RequireAuthenticatedUser();
+  policy.RequireClaim(ClaimTypes.Name, "Joe", ""); });
+\end{lstlisting}
+\subsection{Unit/Controller/Integration Testing}
+\begin{lstlisting}[style=csh]
+public class UnitTest {
+  [Fact]
+  public void TestName(){ /* ... */ } }
+\end{lstlisting}
+\subsection{API Routing}
+\begin{lstlisting}[style=csh]
+public void ConfigureServices(IServiceCollection services) {
+  services.AddRazorPages();
+  services.AddControllersWithViews();
+  services.AddControllers();
+  services.AddMvc(); }
+public void Configure(IApplicationBuilder app, IWebHostEnvironment evn) {
+  app.UseRouting();
+  app.UseEndpoints(endpoints => {
+    endpoints.MapControllers();
+    endpoints.MapRazorPages();
+    endpoints.MapBlazorHub(); }); }
+\end{lstlisting}
+\begin{minipage}{0.5\linewidth}
+  \includegraphics{asp_routing_1.png}
+\end{minipage}
+\begin{minipage}{0.5\linewidth}
+  \includegraphics{asp_routing_2.png}
+\end{minipage}
+\subsection{Sonstiges}
+\textcolor{b}{\textbf{Swagger:}} Eine Spezifikation für die Dokumentation von REST APIs. Programmiersprachen unabhängig. Wird im \textit{Startup.cs} eingetragen. Default unter \textit{http://[server-name]/swagger} erreichbar. \textcolor{b}{\textbf{REST HATEOAS:}} Verlinkte Daten als Links zu Verfügung stellen. \textcolor{b}{\textbf{Exception Handling:}} Error Handling soll generisch funktionieren. $\rightarrow$ Vorgehen: Es gibt eine Exception, welche die notwendigen Daten sammelt. Es gibt einen globalen Errorhandler, welcher diese Exception für Client aufbereitet. Bei einem ungültigen Zustand wird Custom-Exception ausgelöst.
