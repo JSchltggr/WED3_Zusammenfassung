@@ -4,14 +4,7 @@
 \section{React}
 Ist eine Library von Facebook, um User Interfaces zu bauen.\\
 \textcolor{b}{\textbf{Prinzipien:}} Komplexes Problem aufteilen in einfachere Komponenten. Bessere Wiederverwendbarkeit, Erweiterbarkeit, Wartbarkeit, Testbarkeit und Aufgabenverteilung\\
-\textcolor{b}{\textbf{Komponenten und Elemente:}} Sind Funktionen, die HTML zurückgeben. Beliebige Komposition von React-elementen und DOM-Elementen:
-\begin{lstlisting}[style=htmlcssjs]
-function App() {
-  return (
-    <div style={styleObject}><HelloMessage name="HSR" />
-    <img src="/logo.png" /></div>
-  ) }
-\end{lstlisting}
+\textcolor{b}{\textbf{Komponenten und Elemente:}} Sind Funktionen, die HTML zurückgeben. Beliebige Komposition von React-Elementen und DOM-Elementen:
 \subsection{JavaScript XML}
 \begin{minipage}{0.4\linewidth}
   React verwendet JSX (blau), eine Erweiterung von JavaScript (gelb). \textbf{Styles} werden nicht als Strings, sondern als Objekt mitgegeben
@@ -20,27 +13,10 @@ function App() {
   \includegraphics[width=1\linewidth]{jsx.png}
 \end{minipage}
 \subsubsection{Conditionals}
-Was zu null, true, false oder undefined evaluiert wird nicht ausgegeben
+Was zu null, true, false oder undefined evaluiert wird nicht ausgegeben\\
 \includegraphics[width=0.73\linewidth]{react_conditional.png}
-\subsubsection{Funktions- und Klassenkomponenten}
-\begin{lstlisting}[style=htmlcssjs]
-// Alle 3 äquivalent
-function HelloMessage(props) {
-  return <div>Hello {props.name}</div> }
-class HelloMessage extends React.Component {
-  render() {return <div>Hello {this.props.name}</div> }}
-const HelloMessage = ({name}) => <div>Hello {name}</div>
-\end{lstlisting}
 \subsubsection{Props}
 Komponenten erhalten alle Parameter/Properties als \textbf{props} Objekt. Bei Klasse als \textcolor{b}{this.props}, bei Funktionen als Parameter. $\rightarrow$ Props sind immer \textbf{read-only}
-\subsubsection{Rendering und Mounting}
-\textbf{Mounting:} Nötig um Komponenten auf Webseite anzuzeigen.
-\begin{lstlisting}[style=htmlcssjs]
-import React from 'react'
-import ReactDOM from 'react-dom'
-ReactDOM.render(
-  <App/>, document.getElementById('root') )
-\end{lstlisting}
 \subsection{React State}
 React-Klassenkomponenten können einen veränderbaren Zustand haben. Der \textbf{state} einer Komponente ist immer privat. Ändert der State, wird auch die Komponente aktualisiert.
 \begin{lstlisting}[style=htmlcssjs]
@@ -61,12 +37,6 @@ handleUsernameChange = (event) => { this.setState({username: event.target.value}
 handleSubmit = (event) => { event.preventDefault(); }
 \end{lstlisting}
 \subsection{Komponenten Lifecycle}
-\begin{minipage}{0.6\linewidth}
-\includegraphics[width=1\linewidth]{react_lifecycle.png}
-\end{minipage}
-\begin{minipage}{0.4\linewidth}
-React Klassen-Komponenten haben Lifecycle-Methoden. Diese können in 3 Phasen unterteilt werden:
-\end{minipage}
 \textcolor{b}{\textbf{Mounting:}}\\
 \textbf{1. constructor(props)} $\rightarrow$ State initialisieren, sonst weglassen\\
 \textbf{2. static getDerivedStateFromProps(props, state)}\\
@@ -108,11 +78,9 @@ Komponentenbibliothek, Komponenten anzeigen/verstecken abhängig von der URL, F�
 \end{itemize}
 \textcolor{b}{\textbf{State Hook:}}
 \begin{lstlisting}[style=htmlcssjs]
-function Counter(){const [count,setCount]=useState(0);
-  return( <Input onChange={(e) => setCount(e.target.value)}  value={count}/>
-  <Button>onClick={onSubmit}</Button> ); }
+function Counter(){const [count,setCount] = useState(0);
+  return(<button onClick={() => setCount( count+1) }>Click me</button>) ;}
 \end{lstlisting}
-\textbf{Mehrere State-Variablen:} useState Aufrufe müssen immer in derselben Reihenfolge gemacht werden.\\
 \textcolor{b}{\textbf{Effect Hook:}}
 \begin{lstlisting}[style=htmlcssjs]
 useEffect(() => { if (!user) {
@@ -124,7 +92,7 @@ useEffect(() => { if (!user) {
 \begin{itemize}[topsep=0pt, leftmargin=3mm]
   \setlength\itemsep{-0.3em}
   \item Erweitert JavaScript um Typenannotationen
-  \item Typ-Annotation im Code Typ-Inferenz für lokale Definitionen
+  \item Typ-Annotation im Code Typ-Inferenz für lokale Definitio.
   \item Generics, Maybe-Types, Union and Intersection-Types
 \end{itemize}
 \textcolor{b}{\textbf{TypeScript:}}
@@ -179,12 +147,8 @@ const mapStateToProps = (state) => { return {
   transactions: state.transactions } }
 const mapDispatchToProps = { fetchTransactions }
 export default connect(mapStateToProps, mapDispatchToProps)(Component);
-// Root Komponente
-const store = createStore(rootReducer, applyMiddleware(thunkMiddleware));
-render( <Provider store={store}> <App /></Provider>
-    document.getElementById('root') )
 \end{lstlisting}
-\subsubsection{Thunk Actions}
+\subsubsection{Thunk Actions (für asynchrone Funktionen)}
 \begin{lstlisting}[style=htmlcssjs]
 function fetchTransactions(token) {
   return (dispatch, getState) => {
