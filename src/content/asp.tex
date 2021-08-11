@@ -37,7 +37,7 @@ Alternative und vereinfachte Variante vom MVC. Router muss nicht konfiguriert we
 \textcolor{b}{\textbf{MVVM - View:}} \textbf{@page} definiert das Razor-File als Page. \textbf{@page "/test/\{id?\}"} überschreibt die Default-Routing-Informationen.
 \subsection{Razor}
 \textcolor{b}{\textbf{Shared/\_Layout.cshtml:}} Generelles Layout der App. Definierst Sections (Placeholders), welche von Page gefüllt werden.\\
-\textbf{@RenderBody():} Definiert Platz, wo Content Page gerendert wird.\\
+\textbf{@RenderBody():} Definiert Platz, wo Content Page rendert.\\
 \textbf{@RenderSection():} Definiert Sektion, wo Content Page ihren Inhalt platziert\\
 \textcolor{b}{\textbf{\_ViewStart.cshtml:}} Hierarchisch, Code welcher vor Razor-Files ausgeführt wird. Definiert z.B. Layout für alle Pages
 \textcolor{b}{\textbf{\_ViewImports.cshtml:}} Hierarchisch, Namespaces / Tag-Helpers können in diesem File registriert werden.\\
@@ -139,7 +139,6 @@ public interface IBmiService {
   public class BmiService : IBmiService {
     public double Calculcate(Bmi data) {
       return Math.Round(data.Weight + data.Height } }
-
 // Pages/Bmi.cshtml.cs
 public class BmiModel : PageModel {
   private readonly IBmiService _bmiService;
@@ -155,7 +154,6 @@ public class BmiModel : PageModel {
   public void OnGet() {
     if (ModelState.IsValid) { BmiValue = _bmiService.Calculcate(Bmi); }
     else { WrongData = true; } } }
-
 // Pages/Bmi.cshtml
 @page
 @model BmiRechner.Pages.BmiModel
@@ -163,12 +161,10 @@ public class BmiModel : PageModel {
 @if (Model.WrongData) {
   <p>Wrong Data</p> } else {
   <p>@Model.BmiValue</p> }
-
 // Pages/Index.cshtml.cs
 public class IndexModel : PageModel {
   public Bmi Bmi { get; set; } = new Bmi(){Height =170, Weight = 80}; // Startdata
   public void OnGet() { ... } } // OnPost()
-
 // Pages/Index.cshtml
 @page
 @model IndexModel
@@ -182,7 +178,6 @@ public class IndexModel : PageModel {
 \begin{lstlisting}[style=csh]
 // Startup.cs
 endpoints.MapControllers();
-
 // Controllers/BmiController.cs
 [Route("api/[controller]")]
 [ApiController]
